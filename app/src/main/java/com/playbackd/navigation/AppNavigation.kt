@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.playbackd.screens.home.HomeScreen
 import com.playbackd.screens.login.LoginScreen
 import com.playbackd.screens.register.RegisterScreen
 
@@ -15,6 +16,9 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(route = AppScreens.RegisterScreen.route) {
             RegisterScreen(navController)
+        }
+        composable(route = AppScreens.HomeScreen.route) {
+            HomeScreen(navController)
         }
     }
 }

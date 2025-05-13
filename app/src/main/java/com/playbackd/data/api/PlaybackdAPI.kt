@@ -1,10 +1,12 @@
 package com.playbackd.data.api
 
+import com.playbackd.model.AlbumsResponse
 import com.playbackd.model.LoginResponse
 import com.playbackd.model.RegisterResponse
 import com.playbackd.model.UserLogin
 import com.playbackd.model.UserRegister
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface PlaybackdAPI {
@@ -13,4 +15,7 @@ interface PlaybackdAPI {
 
     @POST("register")
     suspend fun register(@Body credentials: UserRegister): RegisterResponse
+
+    @GET("albums")
+    suspend fun getAlbums(): AlbumsResponse
 }

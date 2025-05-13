@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder
 import com.playbackd.controller.SessionManager
 import com.playbackd.converter.DateConverter
 import com.playbackd.data.api.PlaybackdAPI
+import com.playbackd.data.repositories.AlbumRepository
 import com.playbackd.data.repositories.AuthRepository
 import dagger.Module
 import dagger.Provides
@@ -60,5 +61,11 @@ object EventsAPIComposeModule {
     @Singleton
     fun providesAuthRepository(playbackdAPI: PlaybackdAPI, sessionManager: SessionManager): AuthRepository {
         return AuthRepository(playbackdAPI, sessionManager)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAlbumRepository(playbackdAPI: PlaybackdAPI): AlbumRepository {
+        return AlbumRepository(playbackdAPI)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -122,7 +123,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
                 Modifier
                     .padding(20.dp, 5.dp)
                     .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text("REGISTER")
             }
@@ -137,7 +138,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
                         navController.navigate(AppScreens.LoginScreen.route)
                     }
                 ) {
-                    Text("Click here to log in", color = Color(0xFF4CAF50))
+                    Text("Click here to log in", color = MaterialTheme.colorScheme.primary)
                 }
             }
         }

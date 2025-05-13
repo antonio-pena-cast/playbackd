@@ -43,6 +43,13 @@ fun OptionsMenu(navController: NavController) {
                     expanded = false
                 }
             )
+            DropdownMenuItem(
+                text = { Text("Home") },
+                onClick = {
+                    navController.navigate(route = AppScreens.HomeScreen.route)
+                    expanded = false
+                }
+            )
         }
     }
 }

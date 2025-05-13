@@ -3,6 +3,7 @@ package com.playbackd.screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,7 +35,7 @@ fun MainScreen(navController: NavHostController) {
             TopAppBar(
                 title = { Text(text = title) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF4CAF50),
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = Color.Black
                 ),
                 actions = { OptionsMenu(navController) }

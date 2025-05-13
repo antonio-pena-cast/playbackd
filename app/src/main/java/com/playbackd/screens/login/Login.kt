@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.playbackd.navigation.AppScreens
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,8 +49,7 @@ fun LoginScreen(
 
     LaunchedEffect(state.success) {
         if (state.success) {
-            //TODO: Go to main page
-            //navController.navigate(AppScreens.EventsScreen.route)
+            navController.navigate(AppScreens.HomeScreen.route)
         }
     }
 
@@ -117,7 +118,7 @@ fun LoginScreen(
                 Button(
                     onClick = { viewModel.login(email, password) },
                     Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) {
                     Text("LOGIN")
                 }
@@ -132,7 +133,7 @@ fun LoginScreen(
                             navController.navigate(AppScreens.RegisterScreen.route)
                         }
                     ) {
-                        Text("Click here to create one", color = Color(0xFF4CAF50))
+                        Text("Click here to create one", color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
