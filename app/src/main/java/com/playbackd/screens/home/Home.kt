@@ -1,5 +1,8 @@
 package com.playbackd.screens.home
 
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,6 +44,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -52,6 +57,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.playbackd.model.Album
+import com.playbackd.navigation.AppScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +87,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltView
         listFiltered.clear()
         listFiltered.addAll(list.filter {
             it.name.contains(search.value, ignoreCase = true)
-            it.author.contains(search.value, ignoreCase = true)
         })
     }
 
@@ -134,7 +139,7 @@ fun SearchAlbum(search: MutableState<String>) {
             OutlinedTextField(
                 value = search.value,
                 onValueChange = { search.value = it },
-                label = { Text("Busca por nombre o autor...") },
+                label = { Text("Busca por nombre...") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text, imeAction = ImeAction.Search
                 ),
@@ -149,10 +154,16 @@ fun SearchAlbum(search: MutableState<String>) {
 
 @Composable
 fun AlbumItem(navController: NavController, album: Album) {
+    var decodedImage: ImageBitmap? = null
+
+    if (album.image != null) {
+        val imageBytes = Base64.decode(album.image, Base64.DEFAULT)
+        decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size).asImageBitmap()
+    }
+
     Card(
         onClick = {
-            //TODO: Navegar a detalle de un album
-            //navController.navigate(AppScreens.EventItemScreen.route + "/" + event.id)
+            navController.navigate(AppScreens.AlbumDetailScreen.route + "/" + album.id)
         },
         shape = CutCornerShape(0.dp),
         colors = CardDefaults.cardColors(
@@ -163,6 +174,12 @@ fun AlbumItem(navController: NavController, album: Album) {
             .fillMaxWidth()
     ) {
         Column {
+            if (decodedImage != null) {
+                Image(
+                    bitmap = decodedImage,
+                    contentDescription = "Album Image"
+                )
+            }
             Row {
                 Text(album.author, fontSize = 12.sp)
             }

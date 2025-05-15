@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.playbackd.screens.album.AlbumDetailScreen
 import com.playbackd.screens.home.HomeScreen
 import com.playbackd.screens.login.LoginScreen
 import com.playbackd.screens.register.RegisterScreen
@@ -19,6 +20,10 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(route = AppScreens.HomeScreen.route) {
             HomeScreen(navController)
+        }
+        composable(route = AppScreens.AlbumDetailScreen.route + "/{id}") {
+            val id: Int = it.arguments?.getString("id")?.toInt() ?: 0
+            AlbumDetailScreen(navController, id)
         }
     }
 }
