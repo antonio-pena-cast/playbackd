@@ -1,7 +1,7 @@
 package com.playbackd.data.api
 
 import com.playbackd.model.AlbumResponse
-import com.playbackd.model.AlbumReviewResponse
+import com.playbackd.model.ReviewResponse
 import com.playbackd.model.AlbumsResponse
 import com.playbackd.model.LoginResponse
 import com.playbackd.model.RegisterResponse
@@ -26,5 +26,5 @@ interface PlaybackdAPI {
     suspend fun getAlbum(@Path("id") id: Int): AlbumResponse
 
     @GET("albums/{id}/reviews")
-    suspend fun getAlbumReviews(@Path("id") id: Int): AlbumReviewResponse
+    suspend fun getAlbumReviews(@Path("id") id: Int): ReviewResponse
 }

@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.playbackd.R
 import com.playbackd.model.Album
 import com.playbackd.navigation.AppScreens
 
@@ -177,6 +179,11 @@ fun AlbumItem(navController: NavController, album: Album) {
             if (decodedImage != null) {
                 Image(
                     bitmap = decodedImage,
+                    contentDescription = "Album Image"
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.image_not_found),
                     contentDescription = "Album Image"
                 )
             }

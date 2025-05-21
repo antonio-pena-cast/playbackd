@@ -13,6 +13,7 @@ import com.playbackd.converter.DateConverter
 import com.playbackd.data.api.PlaybackdAPI
 import com.playbackd.data.repositories.AlbumRepository
 import com.playbackd.data.repositories.AuthRepository
+import com.playbackd.data.repositories.ReviewRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,5 +68,11 @@ object EventsAPIComposeModule {
     @Singleton
     fun providesAlbumRepository(playbackdAPI: PlaybackdAPI): AlbumRepository {
         return AlbumRepository(playbackdAPI)
+    }
+
+    @Provides
+    @Singleton
+    fun providesReviewRepository(playbackdAPI: PlaybackdAPI): ReviewRepository {
+        return ReviewRepository(playbackdAPI)
     }
 }

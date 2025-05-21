@@ -3,8 +3,8 @@ package com.playbackd.data.repositories
 import com.playbackd.data.api.PlaybackdAPI
 import com.playbackd.model.Album
 import com.playbackd.model.AlbumResponse
-import com.playbackd.model.AlbumReview
-import com.playbackd.model.AlbumReviewResponse
+import com.playbackd.model.FullReview
+import com.playbackd.model.ReviewResponse
 import com.playbackd.model.AlbumsResponse
 import javax.inject.Inject
 
@@ -49,7 +49,7 @@ class AlbumRepository @Inject constructor(val playbackdAPI: PlaybackdAPI) {
         }
     }
 
-    suspend fun getAlbumReviews(albumId: Int): Result<List<AlbumReview>> {
+    suspend fun getAlbumReviews(albumId: Int): Result<List<FullReview>> {
         val result = getAlbumReviewsRemote(albumId)
 
         if (result.isFailure) {
@@ -61,7 +61,7 @@ class AlbumRepository @Inject constructor(val playbackdAPI: PlaybackdAPI) {
         return Result.success(data.msg)
     }
 
-    private suspend fun getAlbumReviewsRemote(albumId: Int): Result<AlbumReviewResponse> {
+    private suspend fun getAlbumReviewsRemote(albumId: Int): Result<ReviewResponse> {
         return try {
             Result.success(playbackdAPI.getAlbumReviews(albumId))
         } catch (e: Exception) {
