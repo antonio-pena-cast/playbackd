@@ -15,6 +15,10 @@ class HomeViewModel @Inject constructor(val albumRepository: AlbumRepository) : 
     var state by mutableStateOf(HomeState())
         private set
 
+    init {
+        getAlbums()
+    }
+
     fun getAlbums() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)

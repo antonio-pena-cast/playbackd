@@ -1,7 +1,10 @@
 package com.playbackd.screens.album
 
+import android.app.DatePickerDialog
 import android.graphics.BitmapFactory
+import android.os.Build.VERSION_CODES
 import android.util.Base64
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,13 +30,11 @@ import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.StarHalf
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -51,8 +52,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,11 +61,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.playbackd.R
 import com.playbackd.model.Album
+import com.playbackd.model.AlbumList
 import com.playbackd.model.FullReview
+import com.playbackd.model.ListenListDTO
+import com.playbackd.model.PlayedListDTO
 import com.playbackd.navigation.AppScreens
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.floor
 
+@RequiresApi(VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumDetailScreen(
@@ -72,7 +82,7 @@ fun AlbumDetailScreen(
     albumId: Int,
     viewModel: AlbumDetailViewModel = hiltViewModel<AlbumDetailViewModel, AlbumDetailViewModelFactory> {
         it.create(albumId)
-    }
+    },
 ) {
     val state = viewModel.state
     val primaryColor = MaterialTheme.colorScheme.primary
@@ -85,6 +95,8 @@ fun AlbumDetailScreen(
     var date by remember { mutableStateOf("") }
     var avgRating by remember { mutableDoubleStateOf(0.0) }
     var decodedImage by remember { mutableStateOf<ImageBitmap?>(null) }
+
+    var albumList by remember { mutableStateOf<AlbumList?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var rating by remember { mutableDoubleStateOf(0.0) }
     var review by remember { mutableStateOf("") }
@@ -92,21 +104,31 @@ fun AlbumDetailScreen(
     var listenListButtonState by remember { mutableStateOf(false) }
     var playedButtonBackground by remember { mutableStateOf<Color>(secondaryColor) }
     var listenListButtonBackground by remember { mutableStateOf<Color>(secondaryColor) }
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
+    var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
+    var showDatePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.album) {
         album = state.album
 
         album?.let {
-            if (it.image != null) {
-                image = it.image!!
-
-                val imageBytes = Base64.decode(image, Base64.DEFAULT)
-                decodedImage =
-                    BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size).asImageBitmap()
-            }
             name = it.name
             author = it.author
             date = it.releaseDate.toString()
+
+            it.image?.let { base64Image ->
+                decodedImage = try {
+                    val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
+
+                    BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)?.asImageBitmap()
+                } catch (e: Exception) {
+                    null
+                }
+            } ?: run {
+                decodedImage = null
+            }
         }
     }
 
@@ -121,6 +143,46 @@ fun AlbumDetailScreen(
                 avgRating = average
             }
         }
+    }
+
+    LaunchedEffect(state.albumList) {
+        albumList = state.albumList
+
+        albumList?.let {
+            rating = if (it.rating == null) {
+                0.0
+            } else {
+                it.rating
+            }
+
+            review = if (it.review == null) {
+                ""
+            } else {
+                it.review
+            }
+
+            if (it.type == "played") {
+                playedButtonState = true
+                playedButtonBackground = primaryColor
+            } else {
+                listenListButtonState = true
+                listenListButtonBackground = primaryColor
+            }
+        }
+    }
+
+    if (showDatePicker) {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
+                showDatePicker = false
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
     }
 
     state.error?.let {
@@ -219,6 +281,11 @@ fun AlbumDetailScreen(
                         ) {
                             IconButton(
                                 onClick = {
+                                    if (listenListButtonState) {
+                                        listenListButtonState = false
+                                        listenListButtonBackground = secondaryColor
+                                    }
+
                                     playedButtonState = !playedButtonState
 
                                     playedButtonBackground = if (playedButtonState) {
@@ -238,6 +305,11 @@ fun AlbumDetailScreen(
 
                             IconButton(
                                 onClick = {
+                                    if (playedButtonState) {
+                                        playedButtonState = false
+                                        playedButtonBackground = secondaryColor
+                                    }
+
                                     listenListButtonState = !listenListButtonState
 
                                     listenListButtonBackground = if (listenListButtonState) {
@@ -277,9 +349,30 @@ fun AlbumDetailScreen(
                                 .padding(vertical = 8.dp)
                         )
 
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Fecha: ${selectedDate?.format(dateFormatter) ?: "Sin seleccionar"}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+
                         Button(
-                            onClick = { showBottomSheet = false },
-                            modifier = Modifier
+                            onClick = { showDatePicker = true }, modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Seleccionar fecha")
+                        }
+
+                        Button(
+                            onClick = {
+                                showBottomSheet = false
+
+                                if (playedButtonState) {
+                                    viewModel.addPlayed(PlayedListDTO(albumId, review, rating.toString(), selectedDate?.format(dateFormatter)))
+                                } else if (listenListButtonState) {
+                                    viewModel.addListenList(ListenListDTO(albumId))
+                                }
+                            }, modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp)
                         ) {

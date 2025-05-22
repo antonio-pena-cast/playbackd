@@ -65,16 +65,9 @@ import com.playbackd.navigation.AppScreens
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeViewModel = hiltViewModel()) {
     val state = viewModel.state
-    val lifecycleOwner = LocalLifecycleOwner.current
     val search = remember { mutableStateOf("") }
     val list = remember { mutableStateListOf<Album>() }
     val listFiltered = remember { mutableStateListOf<Album>() }
-
-    LaunchedEffect(Unit) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            viewModel.getAlbums()
-        }
-    }
 
     LaunchedEffect(state.albums) {
         if (state.albums != null) {
@@ -158,9 +151,17 @@ fun SearchAlbum(search: MutableState<String>) {
 fun AlbumItem(navController: NavController, album: Album) {
     var decodedImage: ImageBitmap? = null
 
-    if (album.image != null) {
-        val imageBytes = Base64.decode(album.image, Base64.DEFAULT)
-        decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size).asImageBitmap()
+    album.image?.let { base64Image ->
+        try {
+            val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+            if (bitmap != null) {
+                decodedImage = bitmap.asImageBitmap()
+            }
+        } catch (e: Exception) {
+            decodedImage = null
+        }
     }
 
     Card(

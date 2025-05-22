@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.playbackd.data.repositories.AlbumRepository
+import com.playbackd.model.ListenListDTO
+import com.playbackd.model.PlayedListDTO
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ class AlbumDetailViewModel @AssistedInject constructor(
     init {
         getAlbum()
         getAlbumReviews()
+        getCurrentAlbum()
     }
 
     fun getAlbum() {
@@ -42,6 +45,38 @@ class AlbumDetailViewModel @AssistedInject constructor(
                 state = state.copy(error = it.message, isLoading = false)
             }.onSuccess {
                 state = state.copy(albumReviews = it, isLoading = false)
+            }
+        }
+    }
+
+    fun getCurrentAlbum() {
+        viewModelScope.launch {
+            albumRepository.getCurrentAlbum(albumId).onFailure {
+                state = state.copy(error = it.message)
+            }.onSuccess {
+                state = state.copy(albumList = it?.list)
+            }
+        }
+    }
+
+    fun addListenList(listenList: ListenListDTO) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            albumRepository.addListenList(listenList).onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(msg = it, isLoading = false)
+            }
+        }
+    }
+
+    fun addPlayed(played: PlayedListDTO) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            albumRepository.addPlayed(played).onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(msg = it, isLoading = false)
             }
         }
     }

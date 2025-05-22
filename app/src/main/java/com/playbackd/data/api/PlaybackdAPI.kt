@@ -3,7 +3,11 @@ package com.playbackd.data.api
 import com.playbackd.model.AlbumResponse
 import com.playbackd.model.ReviewResponse
 import com.playbackd.model.AlbumsResponse
+import com.playbackd.model.ListResponse
+import com.playbackd.model.ListenListDTO
+import com.playbackd.model.AddListResponse
 import com.playbackd.model.LoginResponse
+import com.playbackd.model.PlayedListDTO
 import com.playbackd.model.RegisterResponse
 import com.playbackd.model.UserLogin
 import com.playbackd.model.UserRegister
@@ -27,4 +31,13 @@ interface PlaybackdAPI {
 
     @GET("albums/{id}/reviews")
     suspend fun getAlbumReviews(@Path("id") id: Int): ReviewResponse
+
+    @GET("user/albums/{id}")
+    suspend fun getCurrentAlbumList(@Path("id") id: Int): ListResponse
+
+    @POST("listenlist")
+    suspend fun addListenList(@Body data: ListenListDTO): AddListResponse
+
+    @POST("played")
+    suspend fun addPlayed(@Body data: PlayedListDTO): AddListResponse
 }
