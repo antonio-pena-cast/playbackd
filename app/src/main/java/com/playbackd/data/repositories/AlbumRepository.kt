@@ -133,4 +133,64 @@ class AlbumRepository @Inject constructor(val playbackdAPI: PlaybackdAPI) {
             Result.failure(e)
         }
     }
+
+    suspend fun updatePlayed(albumId: Int, playedListDTO: PlayedListDTO): Result<String> {
+        val result = updatePlayedRemote(albumId, playedListDTO)
+
+        if (result.isFailure) {
+            return Result.failure(result.exceptionOrNull() ?: Exception("Update album failure"))
+        }
+
+        val data = result.getOrThrow()
+
+        return Result.success(data.msg)
+    }
+
+    private suspend fun updatePlayedRemote(albumId: Int, playedListDTO: PlayedListDTO): Result<AddListResponse> {
+        return try {
+            Result.success(playbackdAPI.updatePlayed(playedListDTO, albumId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deletePlayed(albumId: Int): Result<String> {
+        val result = deletePlayedRemote(albumId)
+
+        if (result.isFailure) {
+            return Result.failure(result.exceptionOrNull() ?: Exception("Delete played failure"))
+        }
+
+        val data = result.getOrThrow()
+
+        return Result.success(data.msg)
+    }
+
+    private suspend fun deletePlayedRemote(albumId: Int): Result<AddListResponse> {
+        return try {
+            Result.success(playbackdAPI.deletePlayed(albumId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun deleteListenList(albumId: Int): Result<String> {
+        val result = deleteListenListRemote(albumId)
+
+        if (result.isFailure) {
+            return Result.failure(result.exceptionOrNull() ?: Exception("Delete listenlist failure"))
+        }
+
+        val data = result.getOrThrow()
+
+        return Result.success(data.msg)
+    }
+
+    private suspend fun deleteListenListRemote(albumId: Int): Result<AddListResponse> {
+        return try {
+            Result.success(playbackdAPI.deleteListenList(albumId))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

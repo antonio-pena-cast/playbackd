@@ -12,8 +12,10 @@ import com.playbackd.model.RegisterResponse
 import com.playbackd.model.UserLogin
 import com.playbackd.model.UserRegister
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface PlaybackdAPI {
@@ -40,4 +42,13 @@ interface PlaybackdAPI {
 
     @POST("played")
     suspend fun addPlayed(@Body data: PlayedListDTO): AddListResponse
+
+    @PUT("user/albums/{id}")
+    suspend fun updatePlayed(@Body data: PlayedListDTO, @Path("id") id: Int): AddListResponse
+
+    @DELETE("played/{id}")
+    suspend fun deletePlayed(@Path("id") id: Int): AddListResponse
+
+    @DELETE("listenlist/{id}")
+    suspend fun deleteListenList(@Path("id") id: Int): AddListResponse
 }

@@ -81,6 +81,39 @@ class AlbumDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun updatePlayed(albumId: Int, played: PlayedListDTO) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            albumRepository.updatePlayed(albumId, played).onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(msg = it, isLoading = false)
+            }
+        }
+    }
+
+    fun deletePlayed(albumId: Int) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            albumRepository.deletePlayed(albumId).onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(msg = it, isLoading = false)
+            }
+        }
+    }
+
+    fun deleteListenList(albumId: Int) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            albumRepository.deleteListenList(albumId).onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(msg = it, isLoading = false)
+            }
+        }
+    }
+
     fun clearError() {
         state = state.copy(error = null)
     }

@@ -15,6 +15,7 @@ import com.playbackd.data.repositories.AlbumRepository
 import com.playbackd.data.repositories.AuthRepository
 import com.playbackd.data.repositories.ListRepository
 import com.playbackd.data.repositories.ReviewRepository
+import com.playbackd.data.repositories.UserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,5 +82,11 @@ object EventsAPIComposeModule {
     @Singleton
     fun providesListRepository(playbackdAPI: PlaybackdAPI): ListRepository {
         return ListRepository(playbackdAPI)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUserRepository(playbackdAPI: PlaybackdAPI): UserRepository {
+        return UserRepository(playbackdAPI)
     }
 }

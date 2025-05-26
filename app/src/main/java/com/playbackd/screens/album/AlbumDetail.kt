@@ -66,11 +66,9 @@ import com.playbackd.model.FullReview
 import com.playbackd.model.ListenListDTO
 import com.playbackd.model.PlayedListDTO
 import com.playbackd.navigation.AppScreens
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -89,7 +87,6 @@ fun AlbumDetailScreen(
     val secondaryColor = MaterialTheme.colorScheme.secondary
     var album by remember { mutableStateOf<Album?>(null) }
     var albumReviews by remember { mutableStateOf<List<FullReview>?>(null) }
-    var image by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
@@ -109,6 +106,8 @@ fun AlbumDetailScreen(
     val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var basePlayedState by remember { mutableStateOf(false) }
+    var baseListenListState by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.album) {
         album = state.album
@@ -149,22 +148,24 @@ fun AlbumDetailScreen(
         albumList = state.albumList
 
         albumList?.let {
-            rating = if (it.rating == null) {
-                0.0
-            } else {
-                it.rating
+            if (it.rating != null) {
+                rating = it.rating!!
             }
 
-            review = if (it.review == null) {
-                ""
-            } else {
-                it.review
+            if (it.review != null) {
+                review = it.review!!
+            }
+
+            if (it.date != null) {
+                selectedDate = it.date
             }
 
             if (it.type == "played") {
+                basePlayedState = true
                 playedButtonState = true
                 playedButtonBackground = primaryColor
             } else {
+                baseListenListState = true
                 listenListButtonState = true
                 listenListButtonBackground = primaryColor
             }
@@ -367,10 +368,27 @@ fun AlbumDetailScreen(
                             onClick = {
                                 showBottomSheet = false
 
-                                if (playedButtonState) {
-                                    viewModel.addPlayed(PlayedListDTO(albumId, review, rating.toString(), selectedDate?.format(dateFormatter)))
-                                } else if (listenListButtonState) {
-                                    viewModel.addListenList(ListenListDTO(albumId))
+                                if (baseListenListState) {
+                                    if (!listenListButtonState) {
+                                        viewModel.deleteListenList(albumId)
+                                    }
+                                }
+
+                                if (!basePlayedState) {
+                                    if (playedButtonState) {
+                                        viewModel.addPlayed(PlayedListDTO(albumId, review, rating, selectedDate?.format(dateFormatter)))
+                                    } else if (listenListButtonState) {
+                                        viewModel.addListenList(ListenListDTO(albumId))
+                                    }
+                                } else {
+                                    if (playedButtonState) {
+                                        viewModel.updatePlayed(albumId, PlayedListDTO(albumId, review, rating, selectedDate?.format(dateFormatter)))
+                                    } else {
+                                        viewModel.deletePlayed(albumId)
+                                        review = ""
+                                        rating = 0.0
+                                        selectedDate = null
+                                    }
                                 }
                             }, modifier = Modifier
                                 .fillMaxWidth()

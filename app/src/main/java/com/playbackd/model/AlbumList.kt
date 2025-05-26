@@ -9,9 +9,9 @@ data class AlbumList(
     @SerializedName("album_id")
     var albumId: Int,
     var type: String,
-    var review: String,
-    var rating: Double,
-    var date: LocalDate
+    var review: String?,
+    var rating: Double?,
+    var date: LocalDate?
 )
 
 data class ListFullResponse(
@@ -33,7 +33,7 @@ data class AddListResponse(
 data class PlayedListDTO(
     var albumId: Int,
     var review: String?,
-    var rating: String?,
+    var rating: Double?,
     var date: String?,
 )
 
