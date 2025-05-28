@@ -37,14 +37,21 @@ fun OptionsMenu(navController: NavController) {
                 }
             )
             DropdownMenuItem(
-                text = { Text("Register") },
+                text = { Text("Registrarse") },
                 onClick = {
                     navController.navigate(route = AppScreens.RegisterScreen.route)
                     expanded = false
                 }
             )
             DropdownMenuItem(
-                text = { Text("Home") },
+                text = { Text("Perfil") },
+                onClick = {
+                    navController.navigate(route = AppScreens.UserProfile.route)
+                    expanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = { Text("Inicio") },
                 onClick = {
                     navController.navigate(route = AppScreens.HomeScreen.route)
                     expanded = false

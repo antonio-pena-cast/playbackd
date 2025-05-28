@@ -3,8 +3,20 @@ package com.playbackd.model
 data class User(
     val id: Int,
     val name: String,
-    val email: String,
-    val password: String,
+    val email: String
+)
+
+data class UserResponse(
+    val msg: User
+)
+
+data class UserDTO(
+    val name: String,
+    val email: String
+)
+
+data class UserPasswordDTO(
+    val password: String
 )
 
 data class UserLogin(

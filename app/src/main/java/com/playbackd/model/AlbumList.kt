@@ -26,6 +26,22 @@ data class ListResponse(
     val msg: ListFullResponse?
 )
 
+data class UserListFullResponse(
+    val id: Int,
+    var name: String,
+    var author: String,
+    var genre: String,
+    @SerializedName("release_date")
+    var releaseDate: LocalDate?,
+    var image: String?,
+    @SerializedName("pivot")
+    var list: AlbumList?
+)
+
+data class UserListResponse(
+    val msg: List<UserListFullResponse>?
+)
+
 data class AddListResponse(
     val msg: String
 )
