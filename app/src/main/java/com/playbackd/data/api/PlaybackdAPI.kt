@@ -1,14 +1,13 @@
 package com.playbackd.data.api
 
+import com.playbackd.model.AddListResponse
 import com.playbackd.model.AlbumResponse
-import com.playbackd.model.ReviewResponse
 import com.playbackd.model.AlbumsResponse
 import com.playbackd.model.ListResponse
 import com.playbackd.model.ListenListDTO
-import com.playbackd.model.AddListResponse
 import com.playbackd.model.LoginResponse
 import com.playbackd.model.PlayedListDTO
-import com.playbackd.model.RegisterResponse
+import com.playbackd.model.ReviewResponse
 import com.playbackd.model.UserDTO
 import com.playbackd.model.UserListResponse
 import com.playbackd.model.UserLogin
@@ -27,7 +26,10 @@ interface PlaybackdAPI {
     suspend fun login(@Body credentials: UserLogin): LoginResponse
 
     @POST("register")
-    suspend fun register(@Body credentials: UserRegister): RegisterResponse
+    suspend fun register(@Body credentials: UserRegister): LoginResponse
+
+    @POST("logout")
+    suspend fun logout(): LoginResponse
 
     @GET("albums")
     suspend fun getAlbums(): AlbumsResponse

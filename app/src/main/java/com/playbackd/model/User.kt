@@ -33,7 +33,3 @@ data class UserRegister(
     val email: String,
     val password: String
 )
-
-data class RegisterResponse(
-    val msg: User
-)

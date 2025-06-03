@@ -21,7 +21,7 @@ class RegisterViewModel @Inject constructor(val authRepository: AuthRepository) 
             authRepository.register(username, email, password).onFailure {
                 state = state.copy(error = it.message, isLoading = false)
             }.onSuccess {
-                state = state.copy(success = true, isLoading = false)
+                state = state.copy(success = it, isLoading = false)
             }
         }
     }

@@ -411,6 +411,9 @@ fun StarRatingBar(
     starSize: Dp = 64.dp,
     starCount: Int = 5,
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val borderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+
     Row(modifier = modifier) {
         for (i in 1..starCount) {
             val icon = when {
@@ -418,6 +421,9 @@ fun StarRatingBar(
                 i - 0.5 <= rating -> Icons.Default.StarHalf
                 else -> Icons.Default.StarBorder
             }
+
+            val isFilled = i <= ceil(rating)
+            val tintColor = if (isFilled) primaryColor else borderColor
 
             Icon(
                 imageVector = icon,
@@ -433,7 +439,7 @@ fun StarRatingBar(
                         }.coerceIn(0.0, starCount.toDouble())
                         onRatingChanged(newRating)
                     },
-                tint = if (i <= ceil(rating)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
+                tint = tintColor
             )
         }
     }

@@ -3,7 +3,6 @@ package com.playbackd.data.repositories
 import com.playbackd.controller.SessionManager
 import com.playbackd.data.api.PlaybackdAPI
 import com.playbackd.model.LoginResponse
-import com.playbackd.model.RegisterResponse
 import com.playbackd.model.UserLogin
 import com.playbackd.model.UserRegister
 import javax.inject.Inject
@@ -15,8 +14,6 @@ class AuthRepository @Inject constructor(val playbackdAPI: PlaybackdAPI, val ses
         if (result.isFailure) {
             return Result.failure(result.exceptionOrNull() ?: Exception("The login failed"))
         }
-
-        //TODO: Aqui ira la insercion en base de datos
 
         val data = result.getOrThrow()
 
@@ -40,14 +37,14 @@ class AuthRepository @Inject constructor(val playbackdAPI: PlaybackdAPI, val ses
             return Result.failure(result.exceptionOrNull() ?: Exception("The register failed"))
         }
 
-        //TODO: Aqui ira la insercion en base de datos
-
         val data = result.getOrThrow()
+
+        sessionManager.saveAuthToken(data.msg)
 
         return Result.success(true)
     }
 
-    private suspend fun registerRemote(user: UserRegister): Result<RegisterResponse> {
+    private suspend fun registerRemote(user: UserRegister): Result<LoginResponse> {
         return try {
             Result.success(playbackdAPI.register(user))
         } catch (e: Exception) {

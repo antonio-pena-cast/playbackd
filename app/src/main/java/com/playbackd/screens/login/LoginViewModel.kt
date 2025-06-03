@@ -19,9 +19,9 @@ class LoginViewModel @Inject constructor(val authRepository: AuthRepository) : V
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             authRepository.login(email, password).onFailure {
-                state = state.copy(error = it.message, isLoading = false)
+                state = state.copy(error = it.message, isLoading = false, success = false)
             }.onSuccess {
-                state = state.copy(success = true, isLoading = false)
+                state = state.copy(success = it, isLoading = false)
             }
         }
     }

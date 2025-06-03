@@ -54,6 +54,17 @@ class ProfileViewModel @Inject constructor(val userRepository: UserRepository) :
         }
     }
 
+    fun logout() {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true)
+            userRepository.logout().onFailure {
+                state = state.copy(error = it.message, isLoading = false)
+            }.onSuccess {
+                state = state.copy(success = it, isLoading = false)
+            }
+        }
+    }
+
     fun clearError() {
         state = state.copy(error = null)
     }

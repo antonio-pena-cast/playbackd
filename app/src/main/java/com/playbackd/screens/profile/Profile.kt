@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,23 +30,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.playbackd.R
 import com.playbackd.model.User
 import com.playbackd.model.UserDTO
 import com.playbackd.model.UserPasswordDTO
+import com.playbackd.navigation.AppScreens
+import com.playbackd.utilities.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    navController: NavController, viewModel: ProfileViewModel = hiltViewModel()
+    navController: NavController,
+    viewModel: ProfileViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
     val state = viewModel.state
     var user by remember { mutableStateOf<User?>(null) }
@@ -60,6 +59,12 @@ fun ProfileScreen(
     var newUsername by remember { mutableStateOf("") }
     var showEmailDialog by remember { mutableStateOf(false) }
     var newEmail by remember { mutableStateOf("") }
+
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            navController.navigate(AppScreens.LoginScreen.route)
+        }
+    }
 
     LaunchedEffect(state.user) {
         user = state.user
@@ -100,7 +105,8 @@ fun ProfileScreen(
                 singleLine = true,
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    val image = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                    val image =
+                        if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                     val description = if (passwordVisibility) "Visible" else "Invisible"
 
                     IconButton(onClick = {
@@ -188,14 +194,12 @@ fun ProfileScreen(
 
             TextButton(
                 onClick = { showUserNameDialog = true },
-                colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
             ) {
                 Text(text = username, style = MaterialTheme.typography.titleLarge)
             }
             TextButton(
                 onClick = { showEmailDialog = true },
                 modifier = Modifier.align(Alignment.Start),
-                colors = ButtonDefaults.textButtonColors(contentColor = Color.Black)
             ) {
                 Text(text = email, style = MaterialTheme.typography.bodyMedium)
             }
@@ -209,7 +213,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                navController.navigate("played_albums")
+                navController.navigate(AppScreens.ListScreen.route + "/played")
             }, modifier = Modifier.fillMaxWidth()) {
                 Text("Ver Played")
             }
@@ -217,9 +221,25 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                navController.navigate("listenlist_albums")
+                navController.navigate(AppScreens.ListScreen.route + "/listenlist")
             }, modifier = Modifier.fillMaxWidth()) {
                 Text("Ver ListenList")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                viewModel.logout()
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text("Cerrar Sesión")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                themeViewModel.toggleTheme()
+            }, modifier = Modifier.fillMaxWidth()) {
+                Text("Cambiar tema")
             }
         }
     }

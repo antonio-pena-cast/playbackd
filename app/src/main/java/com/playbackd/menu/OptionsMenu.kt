@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.playbackd.navigation.AppScreens
 
@@ -46,7 +45,7 @@ fun OptionsMenu(navController: NavController) {
             DropdownMenuItem(
                 text = { Text("Perfil") },
                 onClick = {
-                    navController.navigate(route = AppScreens.UserProfile.route)
+                    navController.navigate(route = AppScreens.UserProfileScreen.route)
                     expanded = false
                 }
             )
