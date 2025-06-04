@@ -21,10 +21,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.filled.StarHalf
@@ -34,8 +34,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -294,17 +292,6 @@ fun AlbumDetailScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .height(110.dp)
-                                    .width(150.dp)
-                                    .clip(
-                                        RoundedCornerShape(
-                                            topStart = 0.dp,
-                                            topEnd = 50.dp,
-                                            bottomEnd = 50.dp,
-                                            bottomStart = 0.dp
-                                        )
-                                    )
-                                    .background(color = playedButtonBackground)
                                     .clickable {
                                         if (listenListButtonState) {
                                             listenListButtonState = false
@@ -318,38 +305,56 @@ fun AlbumDetailScreen(
                                         } else {
                                             Color.Transparent
                                         }
-                                    },
-                                contentAlignment = Alignment.Center
+                                    }
+                                    .clip(
+                                        TriangleShape()
+                                    )
+                                    .background(color = playedButtonBackground)
+                                    .height(100.dp)
+                                    .width(96.dp)
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.botonplayed),
-                                    contentDescription = "Botón Played",
-                                    modifier = Modifier.size(200.dp),
+                                    painter = painterResource(R.drawable.played_button),
+                                    contentDescription = "Botón ListenList",
+                                    modifier = Modifier.height(100.dp).width(96.dp),
                                     tint = Color.Unspecified
                                 )
                             }
 
-                            IconButton(
-                                onClick = {
-                                    if (playedButtonState) {
-                                        playedButtonState = false
-                                        playedButtonBackground = Color.Transparent
-                                    }
+                            Box(
+                                modifier = Modifier
+                                    .height(111.dp)
+                                    .width(150.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 0.dp,
+                                            topEnd = 55.dp,
+                                            bottomEnd = 55.dp,
+                                            bottomStart = 0.dp
+                                        )
+                                    )
+                                    .background(color = listenListButtonBackground)
+                                    .clickable {
+                                        if (playedButtonState) {
+                                            playedButtonState = false
+                                            playedButtonBackground = Color.Transparent
+                                        }
 
-                                    listenListButtonState = !listenListButtonState
+                                        listenListButtonState = !listenListButtonState
 
-                                    listenListButtonBackground = if (listenListButtonState) {
-                                        primaryColor
-                                    } else {
-                                        Color.Transparent
-                                    }
-                                },
-                                colors = IconButtonDefaults.iconButtonColors(containerColor = listenListButtonBackground)
+                                        listenListButtonBackground = if (listenListButtonState) {
+                                            primaryColor
+                                        } else {
+                                            Color.Transparent
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Send,
-                                    contentDescription = "Botón ListenList",
-                                    modifier = Modifier.size(40.dp)
+                                    painter = painterResource(id = R.drawable.listenlist_button),
+                                    contentDescription = "Botón Played",
+                                    modifier = Modifier.height(111.dp).width(150.dp),
+                                    tint = Color.Unspecified
                                 )
                             }
                         }
@@ -480,4 +485,11 @@ fun StarRatingBar(
             )
         }
     }
+}
+
+fun TriangleShape(): GenericShape = GenericShape { size, _ ->
+    moveTo(0f, 0f)
+    lineTo(0f, size.height)
+    lineTo(size.width, size.height / 2f)
+    close()
 }
