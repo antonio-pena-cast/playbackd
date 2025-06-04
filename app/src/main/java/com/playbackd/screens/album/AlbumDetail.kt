@@ -6,6 +6,7 @@ import android.os.Build.VERSION_CODES
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Star
@@ -55,8 +55,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.playbackd.R
@@ -99,8 +101,8 @@ fun AlbumDetailScreen(
     var review by remember { mutableStateOf("") }
     var playedButtonState by remember { mutableStateOf(false) }
     var listenListButtonState by remember { mutableStateOf(false) }
-    var playedButtonBackground by remember { mutableStateOf<Color>(secondaryColor) }
-    var listenListButtonBackground by remember { mutableStateOf<Color>(secondaryColor) }
+    var playedButtonBackground by remember { mutableStateOf<Color>(Color.Transparent) }
+    var listenListButtonBackground by remember { mutableStateOf<Color>(Color.Transparent) }
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
     val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy-MM-dd") }
@@ -187,10 +189,18 @@ fun AlbumDetailScreen(
     }
 
     state.error?.let {
-        AlertDialog(onDismissRequest = {
-            viewModel.clearError()
-        }, content = {
-            Text(it)
+        AlertDialog(onDismissRequest = { viewModel.clearError() }, confirmButton = {
+            Button(onClick = {
+                viewModel.clearError()
+            }) {
+                Text("Aceptar")
+            }
+        }, title = { Text("Error") }, text = {
+            Column {
+                Text("Se ha producido un error al contactar con el servidor, comprueba que dispones de conexión a Internet y que estás logeado")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Código de error: $it")
+            }
         })
     }
 
@@ -215,7 +225,7 @@ fun AlbumDetailScreen(
                             bitmap = decodedImage!!,
                             contentDescription = "Album Image",
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(400.dp)
                                 .clip(RoundedCornerShape(8.dp))
                         )
                     } else {
@@ -223,20 +233,22 @@ fun AlbumDetailScreen(
                             painter = painterResource(id = R.drawable.image_not_found),
                             contentDescription = "Image not found",
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(400.dp)
                                 .clip(RoundedCornerShape(8.dp))
                         )
                     }
+                }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
+                Row(modifier = Modifier.fillMaxWidth()) {
                     Column(
                         verticalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     ) {
-                        Text(text = name)
-                        Text(text = author)
-                        Text(text = date)
+                        Text(text = name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        Text(text = author, fontSize = 20.sp)
+                        Text(text = date, fontSize = 16.sp)
                     }
                 }
 
@@ -248,7 +260,7 @@ fun AlbumDetailScreen(
 
                 Button(
                     onClick = { navController.navigate(AppScreens.AlbumReviewsScreen.route + "/" + albumId) },
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start).fillMaxWidth()
                 ) {
                     Text("Reviews")
                 }
@@ -280,27 +292,40 @@ fun AlbumDetailScreen(
                                 .fillMaxWidth()
                                 .padding(bottom = 16.dp)
                         ) {
-                            IconButton(
-                                onClick = {
-                                    if (listenListButtonState) {
-                                        listenListButtonState = false
-                                        listenListButtonBackground = secondaryColor
-                                    }
+                            Box(
+                                modifier = Modifier
+                                    .height(110.dp)
+                                    .width(150.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            topStart = 0.dp,
+                                            topEnd = 50.dp,
+                                            bottomEnd = 50.dp,
+                                            bottomStart = 0.dp
+                                        )
+                                    )
+                                    .background(color = playedButtonBackground)
+                                    .clickable {
+                                        if (listenListButtonState) {
+                                            listenListButtonState = false
+                                            listenListButtonBackground = Color.Transparent
+                                        }
 
-                                    playedButtonState = !playedButtonState
+                                        playedButtonState = !playedButtonState
 
-                                    playedButtonBackground = if (playedButtonState) {
-                                        primaryColor
-                                    } else {
-                                        secondaryColor
-                                    }
-                                },
-                                colors = IconButtonDefaults.iconButtonColors(containerColor = playedButtonBackground)
+                                        playedButtonBackground = if (playedButtonState) {
+                                            primaryColor
+                                        } else {
+                                            Color.Transparent
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.AccountCircle,
+                                    painter = painterResource(id = R.drawable.botonplayed),
                                     contentDescription = "Botón Played",
-                                    modifier = Modifier.size(40.dp),
+                                    modifier = Modifier.size(200.dp),
+                                    tint = Color.Unspecified
                                 )
                             }
 
@@ -308,7 +333,7 @@ fun AlbumDetailScreen(
                                 onClick = {
                                     if (playedButtonState) {
                                         playedButtonState = false
-                                        playedButtonBackground = secondaryColor
+                                        playedButtonBackground = Color.Transparent
                                     }
 
                                     listenListButtonState = !listenListButtonState
@@ -316,7 +341,7 @@ fun AlbumDetailScreen(
                                     listenListButtonBackground = if (listenListButtonState) {
                                         primaryColor
                                     } else {
-                                        secondaryColor
+                                        Color.Transparent
                                     }
                                 },
                                 colors = IconButtonDefaults.iconButtonColors(containerColor = listenListButtonBackground)
@@ -376,13 +401,25 @@ fun AlbumDetailScreen(
 
                                 if (!basePlayedState) {
                                     if (playedButtonState) {
-                                        viewModel.addPlayed(PlayedListDTO(albumId, review, rating, selectedDate?.format(dateFormatter)))
+                                        viewModel.addPlayed(
+                                            PlayedListDTO(
+                                                albumId, review, rating, selectedDate?.format(
+                                                    dateFormatter
+                                                )
+                                            )
+                                        )
                                     } else if (listenListButtonState) {
                                         viewModel.addListenList(ListenListDTO(albumId))
                                     }
                                 } else {
                                     if (playedButtonState) {
-                                        viewModel.updatePlayed(albumId, PlayedListDTO(albumId, review, rating, selectedDate?.format(dateFormatter)))
+                                        viewModel.updatePlayed(
+                                            albumId, PlayedListDTO(
+                                                albumId, review, rating, selectedDate?.format(
+                                                    dateFormatter
+                                                )
+                                            )
+                                        )
                                     } else {
                                         viewModel.deletePlayed(albumId)
                                         review = ""

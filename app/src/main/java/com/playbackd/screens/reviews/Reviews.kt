@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +46,22 @@ fun ReviewsScreen(
             reviews.clear()
             reviews.addAll(it)
         }
+    }
+
+    state.error?.let {
+        AlertDialog(onDismissRequest = { viewModel.clearError() }, confirmButton = {
+            Button(onClick = {
+                viewModel.clearError()
+            }) {
+                Text("Aceptar")
+            }
+        }, title = { Text("Error") }, text = {
+            Column {
+                Text("Se ha producido un error al contactar con el servidor, comprueba que dispones de conexión a Internet y que estás logeado")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Código de error: $it")
+            }
+        })
     }
 
     Column {

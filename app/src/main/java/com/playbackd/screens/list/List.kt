@@ -2,11 +2,14 @@ package com.playbackd.screens.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -64,10 +67,18 @@ fun ListScreen(
     }
 
     state.error?.let {
-        AlertDialog(onDismissRequest = {
-            viewModel.clearError()
-        }, content = {
-            Text(it)
+        AlertDialog(onDismissRequest = { viewModel.clearError() }, confirmButton = {
+            Button(onClick = {
+                viewModel.clearError()
+            }) {
+                Text("Aceptar")
+            }
+        }, title = { Text("Error") }, text = {
+            Column {
+                Text("Se ha producido un error al contactar con el servidor, comprueba que dispones de conexión a Internet y que estás logeado")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Código de error: $it")
+            }
         })
     }
 
@@ -84,6 +95,9 @@ fun ListScreen(
             modifier = Modifier.fillMaxSize(),
         ) {
             SearchAlbum(search)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),

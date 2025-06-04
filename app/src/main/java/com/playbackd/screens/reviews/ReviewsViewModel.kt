@@ -5,13 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.playbackd.data.api.PlaybackdAPI
 import com.playbackd.data.repositories.ReviewRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = ReviewsViewModelFactory::class)
 class ReviewsViewModel @AssistedInject constructor(
@@ -34,5 +32,9 @@ class ReviewsViewModel @AssistedInject constructor(
                 state = state.copy(reviews = it, isLoading = false)
             }
         }
+    }
+
+    fun clearError() {
+        state = state.copy(error = null)
     }
 }

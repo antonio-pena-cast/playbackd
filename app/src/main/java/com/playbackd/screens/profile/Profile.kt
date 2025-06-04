@@ -76,10 +76,18 @@ fun ProfileScreen(
     }
 
     state.error?.let {
-        AlertDialog(onDismissRequest = {
-            viewModel.clearError()
-        }, content = {
-            Text(it)
+        AlertDialog(onDismissRequest = { viewModel.clearError() }, confirmButton = {
+            Button(onClick = {
+                viewModel.clearError()
+            }) {
+                Text("Aceptar")
+            }
+        }, title = { Text("Error") }, text = {
+            Column {
+                Text("Se ha producido un error al contactar con el servidor, comprueba que dispones de conexión a Internet y que estás logeado")
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Código de error: $it")
+            }
         })
     }
 

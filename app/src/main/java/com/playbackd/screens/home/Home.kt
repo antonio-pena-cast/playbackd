@@ -47,9 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.playbackd.R
-import com.playbackd.utilities.UrlProviderViewModel
 import com.playbackd.model.Album
 import com.playbackd.navigation.AppScreens
+import com.playbackd.utilities.UrlProviderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,6 +133,9 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
         ) {
             SearchAlbum(search)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(2),
                                       modifier = Modifier.fillMaxSize(),
                                       horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -200,7 +203,7 @@ fun AlbumItem(navController: NavController, album: Album) {
         Column {
             if (decodedImage != null) {
                 Image(
-                    bitmap = decodedImage, contentDescription = "Album Image"
+                    bitmap = decodedImage!!, contentDescription = "Album Image"
                 )
             } else {
                 Image(
